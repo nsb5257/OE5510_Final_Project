@@ -175,7 +175,13 @@ Acceptance criteria:
 - Tests pass.
 - Any equation that could not be transcribed reliably remains unimplemented and is listed as a blocker.
 
-### [ ] T3 — Minimal preprocessing pipeline
+### [x] T3 — Minimal preprocessing pipeline
+**Completed:** 27 October 2026.
+- Created `src/prepare_data.py` implementing trajectory-level loading, standardization (Eq. 19), and destandardization without altering raw data.
+- Prevented data leakage by deriving normalization statistics ($\mu, \sigma$) strictly from the 2,997 training data points and saving them to `outputs/processed/normalization_stats.json`.
+- Exported structured datasets `outputs/processed/train_data.npz` and `outputs/processed/test_data.npz`.
+- Documented variable ordering, units, and loss scaling guidelines in `outputs/processed/preprocessing_metadata.md`.
+- Created `tests/test_prepare_data.py` verifying file existence, shapes, standardization invertibility, and test dataset integrity. All 5 tests pass (13 tests pass overall).
 **Target:** 27–28 October. **Estimate:** 2–4 hours.
 
 Actions:
