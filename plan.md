@@ -152,7 +152,12 @@ Acceptance criteria:
 - The user can see which variables and maneuver records are available.
 - No fabricated rows, assumed columns, or hidden data cleaning.
 
-### [ ] T2 — Implement and test the ship-motion equations
+### [x] T2 — Implement and test the ship-motion equations
+**Completed:** 27 October 2026.
+- Created `src/ship_dynamics.py` implementing non-dimensional hydrodynamic forces (Eq. 4), accelerations (Eq. 5), and forward Euler integration (Eq. 6).
+- Preserved Prime-I coordinate/sign conventions and verified exact numerical reproduction of training dataset accelerations.
+- Created `tests/test_ship_dynamics.py` with 8 unit and regression tests (equilibrium, analytical hand-calculation, array vectorization, Euler stepping, trajectory simulation, and dataset accuracy checks across all 3 training maneuvers).
+- All 8 unit tests passed via pytest.
 **Target:** 27–28 October. **Estimate:** 3–5 hours.
 
 Actions:
