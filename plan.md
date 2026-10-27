@@ -246,7 +246,13 @@ Acceptance criteria:
 - A backward pass produces valid gradients.
 - Inputs, outputs and physical residuals match `paper_spec.md`.
 
-### [ ] T6 — PINN smoke training and debugging
+### [x] T6 — PINN smoke training and debugging
+**Completed:** 27 October 2026.
+- Executed 1,000-iteration diagnostic smoke run in 26.54 s.
+- Verified numerical stability: zero NaNs/Infs, finite gradients, well-scaled initial loss ($Loss_{data} = 4.90$, $Loss_{phy} = 5.27$).
+- Confirmed joint convergence: total loss decreased from $4.953$ to $0.120$; representative parameters moved towards ground-truth targets ($X_{\delta\delta}' \to -0.00282$ vs true $-0.00272$).
+- Verified checkpoint saving (`outputs/checkpoints/pinn_dynamic.pt`) and exact bit-level parameter reload ($\Delta = 0.00$).
+- Documented complete diagnostics in `notes/experiment_log.md`.
 **Target:** 28–29 October. **Estimate:** 2–4 hours.
 
 Actions:
