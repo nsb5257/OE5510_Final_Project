@@ -128,7 +128,12 @@ Acceptance criteria:
 - The method can be described from the paper-spec note without relying on guessed details.
 - All unclear implementation-critical items are listed as blockers.
 
-### [ ] T1 — Dataset audit and exploratory plots
+### [x] T1 — Dataset audit and exploratory plots
+**Completed:** 27 October 2026.
+- Created `src/inspect_data.py`.
+- Profiled all 6 maneuvers (3 train, 3 test) in `outputs/data_profile.md`: 0 missing values, 0 duplicates, 1.0 s sampling rate.
+- Mapped all columns to paper state variables and verified physical vs dimensionless units.
+- Generated and saved 10 exploratory time-history and trajectory plots under `outputs/plots/`.
 **Target:** 27 October. **Estimate:** 2–4 hours.
 
 Actions:
