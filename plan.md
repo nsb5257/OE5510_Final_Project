@@ -221,7 +221,13 @@ Acceptance criteria:
 - Metrics are calculated in the correct units after reversing any normalization.
 - Results can be reproduced by rerunning a documented command.
 
-### [ ] T5 — Implement the minimal PINN and paper loss
+### [x] T5 — Implement the minimal PINN and paper loss
+**Completed:** 27 October 2026.
+- Implemented `ShipPINN` in `src/model.py` incorporating `ShipMotionNN` and 36 trainable hydrodynamic derivatives initialized to 0.0 with autograd support.
+- Implemented differentiable physical equations (Eq. 4 & 5) and separate residual losses ($e_1, e_2, e_3$) for surge, sway, and yaw.
+- Implemented dynamic weighting schedule ($\beta = 0.01 \to 0.1 \to 1.0$, Eq. 18) and constant weighting baseline ($\beta = 1.0$) in `src/train_pinn.py`.
+- Implemented comprehensive loss and parameter logging for `total_loss`, `loss_data`, `loss_phy`, `loss_phy_u`, `loss_phy_v`, `loss_phy_r`, and derivative estimates.
+- Created `tests/test_train_pinn.py` testing component loss visibility on tiny batches, valid gradients across all parameters, schedule correctness, and smoke training. All 22 tests pass across the codebase.
 **Target:** 28–29 October. **Estimate:** 3–5 hours.
 
 Actions:
