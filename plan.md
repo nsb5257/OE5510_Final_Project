@@ -196,7 +196,14 @@ Acceptance criteria:
 - Variable order and units are documented.
 - The training/evaluation split is explicit and appropriate to the available trajectories. Avoid random row splitting of time-series data when it would leak near-identical time points across splits; follow the paper if its split is specified.
 
-### [ ] T4 — Train and evaluate a data-only baseline
+### [x] T4 — Train and evaluate a data-only baseline
+**Completed:** 27 October 2026.
+- Created `src/model.py` defining `ShipMotionNN` (4 inputs, 3 hidden layers of 10 neurons, Tanh, 3 outputs, Xavier uniform initialization).
+- Created `src/evaluate.py` implementing recursive multi-step forward Euler time integration and RMSE metric computation.
+- Created `src/train_baseline.py` training on all 2,997 training samples for 40,000 iterations using Adam with paper's learning-rate schedule ($10^{-3} \to 10^{-4}$).
+- Training completed in 329.8 s reaching final normalized MSE $3.28 \times 10^{-5}$.
+- Evaluated on all 3 held-out test maneuvers (`turning_circle_30`, `zigzag_20_10`, `zigzag_25_5`); saved model checkpoint, training loss curve, prediction-vs-reference plots, and RMSE metric tables under `outputs/`.
+- Created `tests/test_train_baseline.py`. All 17 tests pass across the repository.
 **Target:** 28 October. **Estimate:** 2–4 hours.
 
 Actions:
