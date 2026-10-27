@@ -1,0 +1,25 @@
+We are recreating the research paper using the dataset already present in this workspace. Read `plan.md` fully before doing anything. The supplied paper should be available under `references/paper.pdf`; if not, search only the current workspace for the supplied PDF. Do not browse online or fetch data/code.
+
+Important dates and scope:
+- Week 1 of the project is treated as 16–22 October 2026 and Week 2 as 23–29 October 2026, with the Week 2 review on Thursday, 29 October at 4:30 PM.
+- This plan covers only the first two weeks and ends at the 29 October milestone. The final project review is 5 November, but do not add Week 3 tasks to `plan.md`.
+- The current date is 27 October, so inspect the workspace first and identify what is already done. There is little time before the review. Do not claim tasks are complete unless their acceptance criteria pass. If starting from zero makes the full scope infeasible, report the true status and blockers rather than faking results.
+
+Execution rules:
+- Follow `plan.md` for the exact task sequence and acceptance criteria.
+- Execute exactly ONE task per agent run. Start with the first unchecked task, T0. Complete only that task, run its checks, update its checkbox accurately, report what happened, and STOP. Do not start the next task in the same run. Wait for my explicit instruction before continuing.
+- Do not use autonomous mode to run the entire plan.
+- Do not install or upgrade packages, fetch data, browse for code, clone repositories, or modify raw data.
+- Inspect the real files; do not assume dataset names, columns, units, or file formats.
+- The PDF may be scanned. Verify paper details visually when necessary. Do not guess equations or hyperparameters; record page/equation references in `notes/paper_spec.md` and flag unclear implementation-critical details for me.
+- Keep the implementation minimal and educational: a few readable Python scripts/functions and small tests. Avoid production architecture, unnecessary abstractions, elaborate configuration systems, APIs, dashboards, and premature optimization.
+- Do not write model code during T0.
+- Separate paper-reported results from results actually produced by our code. Never mark an item done just because code was generated; it must run and meet its acceptance criteria.
+
+For T0 only:
+- Inspect the workspace, local paper, dataset file inventory and Python environment without changing the environment.
+- Create `notes/workspace_inventory.md` and `notes/paper_spec.md` as required by T0.
+- Do not change raw data or install packages.
+- If an implementation-critical equation, variable mapping, or experimental detail is ambiguous, mark it clearly with evidence and stop for my input.
+
+At the end of T0, report: (1) files inspected/created, (2) exact paper facts verified with page/equation references, (3) dataset files and columns found, (4) environment details, (5) blockers/questions, and (6) next task ID. Do not proceed to T1 until I explicitly ask you to continue.
