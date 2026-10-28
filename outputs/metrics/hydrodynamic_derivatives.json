@@ -1,0 +1,334 @@
+{
+  "metadata": {
+    "checkpoint": "outputs/checkpoints/pinn_dynamic.pt",
+    "iterations": 20000,
+    "training_time_s": 387.1894609928131,
+    "num_parameters": 36
+  },
+  "derivatives": {
+    "Xu_prime": {
+      "ground_truth": -0.00319,
+      "paper_identified": -0.0032,
+      "our_identified": -0.003222597064450383,
+      "abs_error_true": 3.259706445038306e-05,
+      "rel_error_true_percent": 1.021851550168748,
+      "diff_paper": 2.2597064450383033e-05,
+      "is_dominant": true
+    },
+    "Xuu_prime": {
+      "ground_truth": 0.00199,
+      "paper_identified": 0.002,
+      "our_identified": 0.0019725521560758352,
+      "abs_error_true": 1.7447843924164787e-05,
+      "rel_error_true_percent": 0.8767760765911953,
+      "diff_paper": 2.7447843924164814e-05,
+      "is_dominant": true
+    },
+    "Xvv_prime": {
+      "ground_truth": 0.00159,
+      "paper_identified": -0.0028,
+      "our_identified": -0.007869984023272991,
+      "abs_error_true": 0.00945998402327299,
+      "rel_error_true_percent": 594.9675486335213,
+      "diff_paper": 0.005069984023272991,
+      "is_dominant": false
+    },
+    "Xrr_prime": {
+      "ground_truth": 0.000338,
+      "paper_identified": -0.0009,
+      "our_identified": -0.0025815493427217007,
+      "abs_error_true": 0.0029195493427217004,
+      "rel_error_true_percent": 863.7719948880772,
+      "diff_paper": 0.0016815493427217007,
+      "is_dominant": false
+    },
+    "Xvr_prime": {
+      "ground_truth": 0.01391,
+      "paper_identified": 0.0092,
+      "our_identified": 0.0035003903321921825,
+      "abs_error_true": 0.010409609667807818,
+      "rel_error_true_percent": 74.83543973981178,
+      "diff_paper": 0.005699609667807817,
+      "is_dominant": false
+    },
+    "Xdd_prime": {
+      "ground_truth": -0.00272,
+      "paper_identified": -0.0027,
+      "our_identified": -0.002834276296198368,
+      "abs_error_true": 0.00011427629619836788,
+      "rel_error_true_percent": 4.201334419057642,
+      "diff_paper": 0.00013427629619836793,
+      "is_dominant": true
+    },
+    "Xvd_prime": {
+      "ground_truth": 0.001609,
+      "paper_identified": 0.0008,
+      "our_identified": -0.0005970036727376282,
+      "abs_error_true": 0.0022060036727376284,
+      "rel_error_true_percent": 137.10401943676996,
+      "diff_paper": 0.0013970036727376282,
+      "is_dominant": false
+    },
+    "Xrd_prime": {
+      "ground_truth": -0.001034,
+      "paper_identified": -0.0015,
+      "our_identified": -0.00226009008474648,
+      "abs_error_true": 0.00122609008474648,
+      "rel_error_true_percent": 118.5773776350561,
+      "diff_paper": 0.00076009008474648,
+      "is_dominant": false
+    },
+    "Yv_prime": {
+      "ground_truth": -0.01902,
+      "paper_identified": -0.0193,
+      "our_identified": -0.018886681646108627,
+      "abs_error_true": 0.0001333183538913714,
+      "rel_error_true_percent": 0.7009377176202493,
+      "diff_paper": 0.00041331835389137386,
+      "is_dominant": true
+    },
+    "Yvvv_prime": {
+      "ground_truth": -0.1287,
+      "paper_identified": -0.1024,
+      "our_identified": -0.10131985694169998,
+      "abs_error_true": 0.027380143058300027,
+      "rel_error_true_percent": 21.27439243069155,
+      "diff_paper": 0.0010801430583000232,
+      "is_dominant": false
+    },
+    "Yr_prime": {
+      "ground_truth": 0.005719,
+      "paper_identified": 0.0056,
+      "our_identified": 0.0057889544405043125,
+      "abs_error_true": 6.995444050431239e-05,
+      "rel_error_true_percent": 1.2231935741268123,
+      "diff_paper": 0.00018895444050431257,
+      "is_dominant": true
+    },
+    "Yrrr_prime": {
+      "ground_truth": -4.8e-05,
+      "paper_identified": 4.5e-05,
+      "our_identified": -0.0013160003582015634,
+      "abs_error_true": 0.0012680003582015633,
+      "rel_error_true_percent": 2641.667412919923,
+      "diff_paper": 0.0013610003582015633,
+      "is_dominant": false
+    },
+    "Yvrr_prime": {
+      "ground_truth": -0.02429,
+      "paper_identified": -0.0167,
+      "our_identified": -0.018767395988106728,
+      "abs_error_true": 0.0055226040118932715,
+      "rel_error_true_percent": 22.73612190981174,
+      "diff_paper": 0.002067395988106728,
+      "is_dominant": false
+    },
+    "Yvvr_prime": {
+      "ground_truth": 0.0211,
+      "paper_identified": 0.0493,
+      "our_identified": 0.05088159441947937,
+      "abs_error_true": 0.02978159441947937,
+      "rel_error_true_percent": 141.14499724871737,
+      "diff_paper": 0.0015815944194793735,
+      "is_dominant": false
+    },
+    "Yd_prime": {
+      "ground_truth": 0.00408,
+      "paper_identified": 0.004,
+      "our_identified": 0.00410158047452569,
+      "abs_error_true": 2.1580474525689786e-05,
+      "rel_error_true_percent": 0.5289331991590633,
+      "diff_paper": 0.00010158047452569,
+      "is_dominant": true
+    },
+    "Ydd_prime": {
+      "ground_truth": -0.000114,
+      "paper_identified": -0.0001,
+      "our_identified": -0.00011723166971933097,
+      "abs_error_true": 3.23166971933096e-06,
+      "rel_error_true_percent": 2.834797999413123,
+      "diff_paper": 1.723166971933096e-05,
+      "is_dominant": false
+    },
+    "Yddd_prime": {
+      "ground_truth": -0.003059,
+      "paper_identified": -0.0029,
+      "our_identified": -0.003123079426586628,
+      "abs_error_true": 6.407942658662787e-05,
+      "rel_error_true_percent": 2.094783477823729,
+      "diff_paper": 0.00022307942658662816,
+      "is_dominant": false
+    },
+    "Yud_prime": {
+      "ground_truth": -0.00456,
+      "paper_identified": -0.0046,
+      "our_identified": -0.004659784957766533,
+      "abs_error_true": 9.978495776653308e-05,
+      "rel_error_true_percent": 2.188266617687129,
+      "diff_paper": 5.9784957766532976e-05,
+      "is_dominant": true
+    },
+    "Yvdd_prime": {
+      "ground_truth": 0.00326,
+      "paper_identified": 0.005,
+      "our_identified": 0.004141976125538349,
+      "abs_error_true": 0.0008819761255383493,
+      "rel_error_true_percent": 27.054482378476973,
+      "diff_paper": 0.000858023874461651,
+      "is_dominant": false
+    },
+    "Yvvd_prime": {
+      "ground_truth": 0.003018,
+      "paper_identified": 0.0053,
+      "our_identified": 0.009039339609444141,
+      "abs_error_true": 0.0060213396094441415,
+      "rel_error_true_percent": 199.5142349053725,
+      "diff_paper": 0.0037393396094441414,
+      "is_dominant": false
+    },
+    "Yrdd_prime": {
+      "ground_truth": -0.002597,
+      "paper_identified": -0.0017,
+      "our_identified": -0.0029535454232245684,
+      "abs_error_true": 0.00035654542322456845,
+      "rel_error_true_percent": 13.72912680880125,
+      "diff_paper": 0.0012535454232245685,
+      "is_dominant": false
+    },
+    "Yrrd_prime": {
+      "ground_truth": 0.000895,
+      "paper_identified": 0.0003,
+      "our_identified": -0.0014261876931414008,
+      "abs_error_true": 0.0023211876931414008,
+      "rel_error_true_percent": 259.3505802392626,
+      "diff_paper": 0.0017261876931414007,
+      "is_dominant": false
+    },
+    "Nv_prime": {
+      "ground_truth": -0.007886,
+      "paper_identified": -0.0078,
+      "our_identified": -0.007882805541157722,
+      "abs_error_true": 3.194458842278175e-06,
+      "rel_error_true_percent": 0.0405079741602609,
+      "diff_paper": 8.280554115772283e-05,
+      "is_dominant": true
+    },
+    "Nvvv_prime": {
+      "ground_truth": 0.00175,
+      "paper_identified": 0.0102,
+      "our_identified": 0.01130907516926527,
+      "abs_error_true": 0.00955907516926527,
+      "rel_error_true_percent": 546.2328668151583,
+      "diff_paper": 0.0011090751692652695,
+      "is_dominant": false
+    },
+    "Nr_prime": {
+      "ground_truth": -0.003701,
+      "paper_identified": -0.0037,
+      "our_identified": -0.003706304356455803,
+      "abs_error_true": 5.304356455803055e-06,
+      "rel_error_true_percent": 0.14332224954885314,
+      "diff_paper": 6.304356455802754e-06,
+      "is_dominant": true
+    },
+    "Nrrr_prime": {
+      "ground_truth": -0.000707,
+      "paper_identified": -0.0011,
+      "our_identified": -0.0011982287978753448,
+      "abs_error_true": 0.0004912287978753448,
+      "rel_error_true_percent": 69.48073520160465,
+      "diff_paper": 9.822879787534469e-05,
+      "is_dominant": false
+    },
+    "Nvrr_prime": {
+      "ground_truth": 0.003726,
+      "paper_identified": 0.0054,
+      "our_identified": 0.005092743318527937,
+      "abs_error_true": 0.0013667433185279368,
+      "rel_error_true_percent": 36.68124848437834,
+      "diff_paper": 0.00030725668147206335,
+      "is_dominant": false
+    },
+    "Nvvr_prime": {
+      "ground_truth": -0.019,
+      "paper_identified": -0.01,
+      "our_identified": -0.009620857425034046,
+      "abs_error_true": 0.009379142574965953,
+      "rel_error_true_percent": 49.36390828929449,
+      "diff_paper": 0.00037914257496595404,
+      "is_dominant": false
+    },
+    "Nd_prime": {
+      "ground_truth": -0.001834,
+      "paper_identified": -0.0018,
+      "our_identified": -0.0018308800645172596,
+      "abs_error_true": 3.119935482740312e-06,
+      "rel_error_true_percent": 0.17011643853545869,
+      "diff_paper": 3.088006451725965e-05,
+      "is_dominant": true
+    },
+    "Ndd_prime": {
+      "ground_truth": -5.6e-05,
+      "paper_identified": -5.7e-05,
+      "our_identified": -6.112200935604051e-05,
+      "abs_error_true": 5.122009356040508e-06,
+      "rel_error_true_percent": 9.146445278643766,
+      "diff_paper": 4.122009356040504e-06,
+      "is_dominant": false
+    },
+    "Nddd_prime": {
+      "ground_truth": 0.001426,
+      "paper_identified": 0.0014,
+      "our_identified": 0.0014117035316303372,
+      "abs_error_true": 1.4296468369662729e-05,
+      "rel_error_true_percent": 1.0025573891769095,
+      "diff_paper": 1.1703531630337253e-05,
+      "is_dominant": false
+    },
+    "Nud_prime": {
+      "ground_truth": 0.00232,
+      "paper_identified": 0.0023,
+      "our_identified": 0.002309122122824192,
+      "abs_error_true": 1.0877877175807966e-05,
+      "rel_error_true_percent": 0.46887401619861924,
+      "diff_paper": 9.122122824192086e-06,
+      "is_dominant": true
+    },
+    "Nvdd_prime": {
+      "ground_truth": -0.001504,
+      "paper_identified": -0.0014,
+      "our_identified": -0.001348532852716744,
+      "abs_error_true": 0.00015546714728325597,
+      "rel_error_true_percent": 10.336911388514359,
+      "diff_paper": 5.146714728325604e-05,
+      "is_dominant": false
+    },
+    "Nvvd_prime": {
+      "ground_truth": -0.001406,
+      "paper_identified": 0.0001,
+      "our_identified": 0.0002647377841640264,
+      "abs_error_true": 0.0016707377841640263,
+      "rel_error_true_percent": 118.82914538862208,
+      "diff_paper": 0.0001647377841640264,
+      "is_dominant": false
+    },
+    "Nrdd_prime": {
+      "ground_truth": 0.001191,
+      "paper_identified": 0.0011,
+      "our_identified": 0.0011143716983497143,
+      "abs_error_true": 7.662830165028572e-05,
+      "rel_error_true_percent": 6.433946402207029,
+      "diff_paper": 1.4371698349714213e-05,
+      "is_dominant": false
+    },
+    "Nrrd_prime": {
+      "ground_truth": -0.000398,
+      "paper_identified": -0.001,
+      "our_identified": -0.000948485336266458,
+      "abs_error_true": 0.000550485336266458,
+      "rel_error_true_percent": 138.31289855941156,
+      "diff_paper": 5.1514663733541986e-05,
+      "is_dominant": false
+    }
+  }
+}

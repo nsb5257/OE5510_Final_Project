@@ -148,3 +148,8 @@ def test_pinn_smoke_training_loop():
     assert len(history['total_loss']) > 0
     assert len(history['loss_phy']) > 0
     assert np.all(np.isfinite(history['total_loss']))
+
+    # Clean up smoke artifacts so they don't pollute the repository
+    for smoke_file in ['outputs/checkpoints/pinn_dynamic_smoke.pt', 'outputs/plots/pinn_dynamic_smoke_loss_curves.png']:
+        if os.path.exists(smoke_file):
+            os.remove(smoke_file)

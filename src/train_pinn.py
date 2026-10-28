@@ -182,7 +182,7 @@ def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42,
     print(f'PINN training completed in {total_time:.2f}s ({total_time/60:.2f} min).')
 
     # Save checkpoint
-    ckpt_prefix = f'pinn_{weighting}'
+    ckpt_prefix = f'pinn_{weighting}' if not smoke else f'pinn_{weighting}_smoke'
     ckpt_path = f'outputs/checkpoints/{ckpt_prefix}.pt'
     torch.save({
         'model_state_dict': model.state_dict(),

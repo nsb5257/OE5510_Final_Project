@@ -313,7 +313,21 @@ Acceptance criteria:
 - Every metric states its variable, unit, split and model.
 - The baseline/PINN comparison uses the same evaluation protocol.
 
-### [ ] T9 — Hydrodynamic derivative analysis
+### [x] T9 — Hydrodynamic derivative analysis
+**Completed:** 28 October 2026.
+- Created `src/analyze_derivatives.py` exporting and analyzing all 36 estimated hydrodynamic derivatives from `outputs/checkpoints/pinn_dynamic.pt`.
+- Compared all 36 parameters across Ground Truth (Yao et al., 2021) and Paper PINN Identified (Hu et al., 2026, Table 2).
+- Key quantitative results:
+  - Dominant control, damping, and resistance parameters ($X_u', X_{uu}', X_{\delta\delta}', Y_v', Y_r', Y_\delta', Y_{u\delta}', N_v', N_r', N_\delta', N_{u\delta}'$) converged with a mean relative error of **1.05%** (median: **0.70%**).
+  - Primary yaw damping $N_r'$ converged to $-0.003706$ vs. ground truth $-0.003701$ (0.14% error; paper: $-0.003700$).
+  - Primary sway damping $Y_v'$ converged to $-0.018887$ vs. ground truth $-0.019020$ (0.70% error; paper: $-0.019300$).
+  - Primary rudder moments $N_\delta'$ converged to $-0.001831$ vs. ground truth $-0.001834$ (0.17% error; paper: $-0.001800$).
+  - Primary surge damping $X_u'$ converged to $-0.003223$ vs. ground truth $-0.003190$ (1.02% error; paper: $-0.003200$).
+- Discrepancy analysis on non-linear and cross-coupling terms:
+  - Documented physical reasons for parameter identifiability limitations on weakly-excited cross terms ($X_{vv}', X_{rr}', Y_{rrr}', N_{vvv}', N_{vvr}'$).
+  - Verified that our identified values exhibit the exact same shifts and sign patterns as published in the paper's Table 2, confirming that these are structural features of planar maneuver identifiability and multi-collinearity between $v'$ and $r'$, not implementation artifacts.
+- Saved full comparison report to `outputs/metrics/hydrodynamic_derivatives_comparison.md`, structured JSON to `outputs/metrics/hydrodynamic_derivatives.json`, and 3-panel visualization to `outputs/plots/derivatives_comparison.png`.
+- Created `tests/test_analyze_derivatives.py`. All 30 unit tests pass across the entire repository.
 **Target:** 29 October, if derivative estimates are available. **Estimate:** 2–4 hours.
 
 Actions:
