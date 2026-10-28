@@ -1,9 +1,5 @@
 # Physics-Informed Neural Network (PINN) for Ship Maneuvering Motion
 
-[![Tests](https://img.shields.io/badge/pytest-33%20passed-brightgreen.svg)]()
-[![Python](https://img.shields.io/badge/python-3.13-blue.svg)]()
-[![PyTorch](https://img.shields.io/badge/pytorch-2.13.0%2Bcpu-orange.svg)]()
-
 Educational and reproducible Python implementation reproducing the core simulation experiments from:
 
 > **Identification modeling of ship maneuvering motion based on physics-informed neural network**  
