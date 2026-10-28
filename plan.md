@@ -286,7 +286,20 @@ Acceptance criteria:
 - Losses and coefficient values are saved, not just printed to the console.
 - Deviations from the paper are explicitly recorded.
 
-### [ ] T8 — Evaluate maneuvers, plot predictions and compute RMSE
+### [x] T8 — Evaluate maneuvers, plot predictions and compute RMSE
+**Completed:** 28 October 2026.
+- Created `src/evaluate_all.py` implementing unified 1,000-second recursive simulation for Ground Truth, PINN, Identified Model, and Baseline NN.
+- Generated reproductions of paper figures:
+  - `outputs/plots/paper_fig6_zigzag_25_5_comparison.png` (reproducing paper Figure 6)
+  - `outputs/plots/paper_fig7_zigzag_20_10_comparison.png` (reproducing paper Figure 7)
+  - `outputs/plots/paper_fig8_turning_circle_30_comparison.png` (reproducing paper Figure 8)
+- Computed physical RMSE metrics and created comprehensive comparison table side-by-side with paper Table 3:
+  - Turning Circle (30°): PINN RMSE $u = 0.0520\text{ m/s}$ (paper: $0.0508\text{ m/s}$), $v = 0.0079\text{ m/s}$ (paper: $0.0041\text{ m/s}$), $r = 0.0022\text{ deg/s}$ (paper: $0.0013\text{ deg/s}$).
+  - Zigzag 20/10: PINN RMSE $u = 0.0091\text{ m/s}$ (paper: $0.0130\text{ m/s}$), $v = 0.0121\text{ m/s}$ (paper: $0.0145\text{ m/s}$), $r = 0.0037\text{ deg/s}$ (paper: $0.0063\text{ deg/s}$).
+  - Zigzag 25/5: PINN RMSE $u = 0.0283\text{ m/s}$ (paper: $0.0398\text{ m/s}$), $v = 0.0356\text{ m/s}$ (paper: $0.0909\text{ m/s}$), $r = 0.0108\text{ deg/s}$ (paper: $0.0419\text{ deg/s}$).
+  - Identified Model: Achieves near-zero physical errors ($u < 0.003\text{ m/s}$, $v < 0.002\text{ m/s}$, $r \approx 0.001\text{ deg/s}$ across all test maneuvers), demonstrating high-fidelity recovery of the underlying hydrodynamic parameters.
+- Saved metrics to `outputs/metrics/model_comparison_metrics.json` and `outputs/metrics/model_comparison_table.md`.
+- Created `tests/test_evaluate_all.py`. All 26 unit tests pass across the entire codebase.
 **Target:** 29 October, after a successful PINN run. **Estimate:** 2–4 hours.
 
 Actions:
