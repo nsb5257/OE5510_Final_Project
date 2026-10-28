@@ -339,7 +339,20 @@ Acceptance criteria:
 - Estimates and comparison values are traceable to a run and a source.
 - Incomparable or unavailable reference values are marked as such; do not invent replacements.
 
-### [ ] T10 — One controlled ablation
+### [x] T10 — One controlled ablation
+**Completed:** 28 October 2026.
+- Trained PINN under constant loss weighting ($\beta = 1.00$ throughout, 20,000 iterations, seed 42) in 457.9 s (7.63 min). Saved checkpoint `outputs/checkpoints/pinn_constant.pt` and loss curves `outputs/plots/pinn_constant_loss_curves.png`.
+- Created `src/compare_ablation.py` performing strict, controlled comparative analysis between Dynamic ($\beta = 0.01 \to 0.10 \to 1.00$) and Constant ($\beta = 1.00$) weighting.
+- Key quantitative ablation results:
+  - **Loss Convergence:** Dynamic weighting achieved nearly an order-of-magnitude lower final total loss ($3.38 \times 10^{-4}$ vs. $3.08 \times 10^{-3}$ for Constant). Final data loss was $5.6\times$ lower ($3.02 \times 10^{-4}$ vs. $1.70 \times 10^{-3}$) and physics loss was $3.8\times$ lower ($3.61 \times 10^{-4}$ vs. $1.38 \times 10^{-3}$).
+  - **Training Stability:** Constant weighting exhibited severe transient loss spikes (e.g., total loss spiking to $6.78 \times 10^{-2}$ at iter 12,000) caused by destructive gradient interference between uncalibrated physics residuals and randomly initialized neural network weights. Dynamic weighting exhibited smooth, monotonic decay.
+  - **Parameter Identification Accuracy:** Dominant hydrodynamic derivatives achieved **1.05%** mean relative error under Dynamic weighting vs. **6.04%** under Constant weighting (nearly $6\times$ better accuracy).
+  - **Test Trajectory Prediction:** Dynamic weighting outperformed Constant weighting on all 3 held-out test maneuvers:
+    - Turning Circle 30° direct RMSE sum: **0.0621** (Dynamic) vs. **0.1458** (Constant).
+    - Zigzag 20/10 direct RMSE sum: **0.0249** (Dynamic) vs. **0.0552** (Constant).
+    - Zigzag 25/5 direct RMSE sum: **0.0747** (Dynamic) vs. **0.1241** (Constant).
+- Saved comparison report to `outputs/metrics/ablation_metrics.md`, structured metrics to `outputs/metrics/ablation_metrics.json`, and comparison visualization to `outputs/plots/ablation_comparison.png`.
+- Created `tests/test_ablation.py`. All 33 unit tests pass across the entire codebase.
 **Target:** 29 October, only if the PINN and baseline both run. **Estimate:** 2–4 hours.
 
 Actions:
