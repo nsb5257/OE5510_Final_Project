@@ -36,6 +36,8 @@ def parse_args():
                         help='Random seed for reproducibility')
     parser.add_argument('--log_interval', type=int, default=2000,
                         help='Iterations between console logs')
+    parser.add_argument('--device', type=str, default=None,
+                        help="Device to run on ('cuda', 'cpu', or None for auto-detection)")
     return parser.parse_args()
 
 
@@ -54,8 +56,12 @@ def get_lr(initial_lr, iteration):
     return initial_lr * (0.1 ** decay_step)
 
 
-def train_baseline(iterations=40000, initial_lr=0.001, seed=42, log_interval=2000):
+def train_baseline(iterations=40000, initial_lr=0.001, seed=42, log_interval=2000, device=None):
     set_seed(seed)
+    if device is None:
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(device)
+    print(f'Using device: {device}')
     os.makedirs('outputs/checkpoints', exist_ok=True)
     os.makedirs('outputs/plots', exist_ok=True)
 
@@ -64,14 +70,14 @@ def train_baseline(iterations=40000, initial_lr=0.001, seed=42, log_interval=200
     with open('outputs/processed/normalization_stats.json', 'r') as f:
         stats = json.load(f)
 
-    X_train = torch.tensor(data['inputs_norm'], dtype=torch.float32)
-    Y_train = torch.tensor(data['targets_norm'], dtype=torch.float32)
+    X_train = torch.tensor(data['inputs_norm'], dtype=torch.float32, device=device)
+    Y_train = torch.tensor(data['targets_norm'], dtype=torch.float32, device=device)
 
     n_samples = X_train.shape[0]
     print(f'Training Baseline NN: {n_samples} samples, {iterations} iterations, seed={seed}')
 
     # 2. Instantiate model and optimizer
-    model = ShipMotionNN(input_dim=4, hidden_dim=10, output_dim=3)
+    model = ShipMotionNN(input_dim=4, hidden_dim=10, output_dim=3).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=initial_lr)
     loss_fn = nn.MSELoss()
 
@@ -138,7 +144,8 @@ def main():
         iterations=args.iterations,
         initial_lr=args.lr,
         seed=args.seed,
-        log_interval=args.log_interval
+        log_interval=args.log_interval,
+        device=args.device
     )
 
 

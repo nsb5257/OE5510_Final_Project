@@ -83,10 +83,11 @@ def predict_trajectory_nn(model, rudder_history, initial_state, stats, dt=1.0, L
             # Standardize inputs
             raw_in = np.array([u, v, r, delta], dtype=np.float32)
             norm_in = (raw_in - in_mean) / in_std
-            tensor_in = torch.tensor(norm_in).unsqueeze(0)
+            dev = next(model.parameters()).device
+            tensor_in = torch.tensor(norm_in, device=dev).unsqueeze(0)
 
             # Neural network prediction
-            norm_out = model(tensor_in).squeeze(0).numpy()
+            norm_out = model(tensor_in).squeeze(0).cpu().numpy()
 
             # Destandardize to physical accelerations
             u_dot, v_dot, r_dot = norm_out * tgt_std + tgt_mean

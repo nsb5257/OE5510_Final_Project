@@ -43,6 +43,8 @@ def parse_args():
                         help='Iterations between console logs')
     parser.add_argument('--smoke', action='store_true',
                         help='Run 50 iterations as a smoke test')
+    parser.add_argument('--device', type=str, default=None,
+                        help="Device to run on ('cuda', 'cpu', or None for auto-detection)")
     return parser.parse_args()
 
 
@@ -81,12 +83,16 @@ def get_lr(initial_lr, iteration):
     return initial_lr * (0.1 ** decay_step)
 
 
-def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42, log_interval=2000, smoke=False):
+def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42, log_interval=2000, smoke=False, device=None):
     if smoke:
         iterations = 50
         log_interval = 10
 
     set_seed(seed)
+    if device is None:
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(device)
+    print(f'Using device: {device}')
     os.makedirs('outputs/checkpoints', exist_ok=True)
     os.makedirs('outputs/plots', exist_ok=True)
     os.makedirs('outputs/metrics', exist_ok=True)
@@ -96,15 +102,15 @@ def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42,
     with open('outputs/processed/normalization_stats.json', 'r') as f:
         stats = json.load(f)
 
-    X_train_norm = torch.tensor(data['inputs_norm'], dtype=torch.float32)
-    Y_train_norm = torch.tensor(data['targets_norm'], dtype=torch.float32)
-    X_train_raw = torch.tensor(data['inputs_raw'], dtype=torch.float32)
+    X_train_norm = torch.tensor(data['inputs_norm'], dtype=torch.float32, device=device)
+    Y_train_norm = torch.tensor(data['targets_norm'], dtype=torch.float32, device=device)
+    X_train_raw = torch.tensor(data['inputs_raw'], dtype=torch.float32, device=device)
 
-    tgt_mean = torch.tensor(data['tgt_mean'], dtype=torch.float32)
-    tgt_std = torch.tensor(data['tgt_std'], dtype=torch.float32)
+    tgt_mean = torch.tensor(data['tgt_mean'], dtype=torch.float32, device=device)
+    tgt_std = torch.tensor(data['tgt_std'], dtype=torch.float32, device=device)
 
     # 2. Instantiate PINN model
-    model = ShipPINN()
+    model = ShipPINN().to(device)
     # Optimizer optimizes both neural network parameters AND 36 hydrodynamic derivatives jointly
     optimizer = torch.optim.Adam(model.parameters(), lr=initial_lr)
 
@@ -235,7 +241,8 @@ def main():
         initial_lr=args.lr,
         seed=args.seed,
         log_interval=args.log_interval,
-        smoke=args.smoke
+        smoke=args.smoke,
+        device=args.device
     )
 
 

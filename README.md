@@ -196,3 +196,24 @@ Under identical conditions (20,000 iterations, seed 42):
 1. **Iteration Budget on CPU:** The original paper trained for 120,000 iterations on GPU hardware. In our local CPU environment, 20,000 iterations using precomputed kinematic basis matrices achieved dominant parameter relative error of 1.05% and reproduced Table 3 trajectory RMSEs within $< 0.002$ margin.
 2. **Identifiability of Non-Linear Cross Terms:** Higher-order cubic cross terms ($X_{vv}', X_{rr}', Y_{rrr}', N_{vvv}'$) exhibit discrepancies against ground truth in both our implementation and the published paper's Table 2. This stems from parameter multi-collinearity between sway velocity $v'$ and yaw rate $r'$ in standard planar maneuvers, which permits mutual parameter compensation while still generating highly accurate total hydrodynamic forces.
 3. **Single-Seed Evaluation:** The controlled ablation was conducted with a fixed random seed (42) and identical initialization. While the quantitative superiority of dynamic weighting is evident, multi-seed statistical significance was not evaluated.
+
+---
+
+## 7. Running on Kaggle (GPU Acceleration)
+
+The codebase natively auto-detects and utilizes CUDA GPUs when available (such as Kaggle NVIDIA T4 or P100 accelerators), while retaining full CPU compatibility.
+
+### Quick Start on Kaggle:
+1. Create a new Kaggle Notebook and enable GPU acceleration (`Settings -> Accelerator -> GPU T4 x2` or `P100`).
+2. In a notebook cell, clone and enter the repository:
+   ```bash
+   !git clone https://github.com/nsb5257/OE5510_Final_Project.git
+   %cd OE5510_Final_Project
+   ```
+3. Run the automated tests and training on GPU:
+   ```bash
+   !python -m pytest tests -v
+   !python src/train_pinn.py --iterations 20000 --weighting dynamic --device cuda
+   !python src/evaluate_all.py
+   ```
+   *You can also open and run [`notebooks/kaggle_reproduction.ipynb`](notebooks/kaggle_reproduction.ipynb) directly.*
