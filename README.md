@@ -191,26 +191,7 @@ Under identical conditions (20,000 iterations, seed 42):
 
 ---
 
-## 6. Acceptance Criteria & Validation Summary
-
-| Task | Scope | Status | Acceptance Verification |
-|---|---|---|---|
-| **T0** | Workspace inventory & paper spec | Passed | Derived Prime-I equations matching training accelerations within $< 10^{-5}$. Documented Table 1 & 2. |
-| **T1** | Dataset audit & exploratory plots | Passed | Verified 0 missing, 0 duplicates, 1.0s sampling across all 6 maneuvers; generated 10 plots. |
-| **T2** | Ship dynamics implementation | Passed | 8 unit tests passed; verified numerical agreement against physical dataset accelerations. |
-| **T3** | Minimal preprocessing pipeline | Passed | Standardized inputs/outputs without data leakage; 5 unit tests passed. |
-| **T4** | Data-only baseline NN | Passed | Trained 40,000 iterations reaching MSE $3.28 \times 10^{-5}$; saved checkpoint and metrics. |
-| **T5** | Minimal PINN & paper loss | Passed | Implemented 36 trainable derivatives and autograd residual loss; 5 unit tests passed. |
-| **T6** | Smoke training & debugging | Passed | Executed 1,000-iteration diagnostic run; verified exact bit-level checkpoint reload ($\Delta = 0.00$). |
-| **T7** | Main PINN simulation run | Passed | Trained 20,000 iterations with dynamic weighting; converged to loss $3.38 \times 10^{-4}$. |
-| **T8** | Trajectory evaluation & RMSE | Passed | Reproduced Paper Figures 6, 7, 8 and Table 3; identified model achieved $u < 0.003$ m/s error. |
-| **T9** | Hydrodynamic derivative analysis | Passed | Compared all 36 derivatives; dominant parameters achieved 1.05% mean relative error. |
-| **T10** | Controlled loss-weighting ablation | Passed | Demonstrated dynamic weighting superiority over constant weighting across losses, parameters, and RMSE. |
-| **T11** | Two-week checkpoint & documentation | Passed | Verified all outputs, documentation, and 33 passing automated unit tests. |
-
----
-
-## 7. Known Limitations and Deviations from the Paper
+## 6. Known Limitations and Deviations from the Paper
 
 1. **Iteration Budget on CPU:** The original paper trained for 120,000 iterations on GPU hardware. In our local CPU environment, 20,000 iterations using precomputed kinematic basis matrices achieved dominant parameter relative error of 1.05% and reproduced Table 3 trajectory RMSEs within $< 0.002$ margin.
 2. **Identifiability of Non-Linear Cross Terms:** Higher-order cubic cross terms ($X_{vv}', X_{rr}', Y_{rrr}', N_{vvv}'$) exhibit discrepancies against ground truth in both our implementation and the published paper's Table 2. This stems from parameter multi-collinearity between sway velocity $v'$ and yaw rate $r'$ in standard planar maneuvers, which permits mutual parameter compensation while still generating highly accurate total hydrodynamic forces.
