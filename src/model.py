@@ -14,6 +14,19 @@ import torch
 import torch.nn as nn
 from src.ship_dynamics import SHIP_PARTICULARS, FIXED_ACCELERATION_DERIVATIVES, ORIGINAL_HYDRODYNAMIC_DERIVATIVES
 
+# Parameter names in fixed order for vectorized computations
+X_PARAM_NAMES = [
+    'Xu_prime', 'Xuu_prime', 'Xvv_prime', 'Xrr_prime', 'Xvr_prime', 'Xdd_prime', 'Xvd_prime', 'Xrd_prime'
+]
+Y_PARAM_NAMES = [
+    'Yv_prime', 'Yvvv_prime', 'Yr_prime', 'Yrrr_prime', 'Yd_prime', 'Ydd_prime', 'Yddd_prime',
+    'Yvrr_prime', 'Yvvr_prime', 'Yud_prime', 'Yvdd_prime', 'Yvvd_prime', 'Yrdd_prime', 'Yrrd_prime'
+]
+N_PARAM_NAMES = [
+    'Nv_prime', 'Nvvv_prime', 'Nr_prime', 'Nrrr_prime', 'Nd_prime', 'Ndd_prime', 'Nddd_prime',
+    'Nvrr_prime', 'Nvvr_prime', 'Nud_prime', 'Nvdd_prime', 'Nvvd_prime', 'Nrdd_prime', 'Nrrd_prime'
+]
+
 
 class ShipMotionNN(nn.Module):
     """
@@ -75,7 +88,7 @@ class ShipPINN(nn.Module):
             for k in ORIGINAL_HYDRODYNAMIC_DERIVATIVES.keys()
         })
 
-        # Fixed parameters (registered as buffers so they move with device but do not require gradients)
+        # Fixed parameters (registered as buffers)
         self.register_buffer('m_prime', torch.tensor(SHIP_PARTICULARS['m_prime'], dtype=torch.float32))
         self.register_buffer('xG_prime', torch.tensor(SHIP_PARTICULARS['xG_prime'], dtype=torch.float32))
         self.register_buffer('Iz_prime', torch.tensor(SHIP_PARTICULARS['Iz_prime'], dtype=torch.float32))
@@ -90,86 +103,86 @@ class ShipPINN(nn.Module):
         """Forward pass through neural network."""
         return self.nn(x_norm)
 
-    def compute_physics_accelerations(self, u, v, r, delta):
+    def precompute_basis(self, inputs_raw):
         """
-        Differentiable computation of physical accelerations via Equations (4) and (5).
-        Inputs are raw physical tensors: u [m/s], v [m/s], r [rad/s], delta [rad].
+        Precomputes the invariant kinematic basis matrices for training samples.
+        Inputs: inputs_raw tensor [N, 4] with columns (u, v, r, delta).
+        Returns a dict of tensors enabling fast O(1) matrix multiplication per step.
         """
-        U = torch.clamp(u, min=1e-4)
+        u = inputs_raw[:, 0]
+        v = inputs_raw[:, 1]
+        r = inputs_raw[:, 2]
+        delta = inputs_raw[:, 3]
 
-        # Non-dimensional states (Prime-I system)
+        U = torch.clamp(u, min=1e-4)
         u_p = u / U
         v_p = v / U
         r_p = r * self.L / U
         delta_u_p = (u - self.U0) / U
         delta_p = delta
 
-        p = self.hydro_params
+        # Basis for f1 (8 terms)
+        phi1 = torch.stack([
+            delta_u_p, delta_u_p**2, v_p**2, r_p**2, v_p * r_p,
+            delta_p**2, v_p * delta_p, r_p * delta_p
+        ], dim=1)
+        f1_const = self.m_prime * self.xG_prime * (r_p**2) + self.m_prime * v_p * r_p
 
-        # Page 4, Equation (4) - Non-dimensional forces f1', f2', f3'
-        f1_p = (
-            p['Xu_prime'] * delta_u_p
-            + p['Xuu_prime'] * (delta_u_p ** 2)
-            + p['Xvv_prime'] * (v_p ** 2)
-            + (self.m_prime * self.xG_prime + p['Xrr_prime']) * (r_p ** 2)
-            + (self.m_prime + p['Xvr_prime']) * v_p * r_p
-            + p['Xdd_prime'] * (delta_p ** 2)
-            + p['Xvd_prime'] * v_p * delta_p
-            + p['Xrd_prime'] * r_p * delta_p
-        )
+        # Basis for f2 and f3 (14 terms)
+        phi2 = torch.stack([
+            v_p, v_p**3, r_p, r_p**3, delta_p, delta_p**2, delta_p**3,
+            v_p * (r_p**2), (v_p**2) * r_p, delta_u_p * delta_p,
+            v_p * (delta_p**2), (v_p**2) * delta_p, r_p * (delta_p**2), (r_p**2) * delta_p
+        ], dim=1)
+        f2_const = -self.m_prime * u_p * r_p
+        f3_const = -self.m_prime * self.xG_prime * u_p * r_p
 
-        f2_p = (
-            -self.m_prime * u_p * r_p
-            + p['Yv_prime'] * v_p
-            + p['Yvvv_prime'] * (v_p ** 3)
-            + p['Yr_prime'] * r_p
-            + p['Yrrr_prime'] * (r_p ** 3)
-            + p['Yd_prime'] * delta_p
-            + p['Ydd_prime'] * (delta_p ** 2)
-            + p['Yddd_prime'] * (delta_p ** 3)
-            + p['Yvrr_prime'] * v_p * (r_p ** 2)
-            + p['Yvvr_prime'] * (v_p ** 2) * r_p
-            + p['Yud_prime'] * delta_u_p * delta_p
-            + p['Yvdd_prime'] * v_p * (delta_p ** 2)
-            + p['Yvvd_prime'] * (v_p ** 2) * delta_p
-            + p['Yrdd_prime'] * r_p * (delta_p ** 2)
-            + p['Yrrd_prime'] * (r_p ** 2) * delta_p
-        )
-
-        f3_p = (
-            -self.m_prime * self.xG_prime * u_p * r_p
-            + p['Nv_prime'] * v_p
-            + p['Nvvv_prime'] * (v_p ** 3)
-            + p['Nr_prime'] * r_p
-            + p['Nrrr_prime'] * (r_p ** 3)
-            + p['Nd_prime'] * delta_p
-            + p['Ndd_prime'] * (delta_p ** 2)
-            + p['Nddd_prime'] * (delta_p ** 3)
-            + p['Nvrr_prime'] * v_p * (r_p ** 2)
-            + p['Nvvr_prime'] * (v_p ** 2) * r_p
-            + p['Nud_prime'] * delta_u_p * delta_p
-            + p['Nvdd_prime'] * v_p * (delta_p ** 2)
-            + p['Nvvd_prime'] * (v_p ** 2) * delta_p
-            + p['Nrdd_prime'] * r_p * (delta_p ** 2)
-            + p['Nrrd_prime'] * (r_p ** 2) * delta_p
-        )
-
-        # Page 4, Equation (5) - Mass matrix determinant & accelerations
         detM = (self.m_prime - self.Y_vdot_p) * (self.Iz_prime - self.N_rdot_p) - \
                (self.m_prime * self.xG_prime - self.Y_rdot_p) * (self.m_prime * self.xG_prime - self.N_vdot_p)
 
+        scale_lin = (U ** 2) / self.L
+        scale_ang = (U ** 2) / (self.L ** 2)
+
+        return {
+            'phi1': phi1,
+            'f1_const': f1_const,
+            'phi2': phi2,
+            'f2_const': f2_const,
+            'f3_const': f3_const,
+            'detM': detM,
+            'scale_lin': scale_lin,
+            'scale_ang': scale_ang
+        }
+
+    def compute_physics_accelerations(self, u, v, r, delta):
+        """
+        Differentiable computation of physical accelerations via Equations (4) and (5).
+        Inputs are raw physical tensors: u [m/s], v [m/s], r [rad/s], delta [rad].
+        """
+        inputs_raw = torch.stack([u, v, r, delta], dim=1) if u.dim() > 0 else torch.stack([u, v, r, delta]).unsqueeze(0)
+        basis = self.precompute_basis(inputs_raw)
+
+        theta1 = torch.stack([self.hydro_params[k] for k in X_PARAM_NAMES])
+        theta2 = torch.stack([self.hydro_params[k] for k in Y_PARAM_NAMES])
+        theta3 = torch.stack([self.hydro_params[k] for k in N_PARAM_NAMES])
+
+        f1_p = torch.matmul(basis['phi1'], theta1) + basis['f1_const']
+        f2_p = torch.matmul(basis['phi2'], theta2) + basis['f2_const']
+        f3_p = torch.matmul(basis['phi2'], theta3) + basis['f3_const']
+
         u_dot_p = f1_p / (self.m_prime - self.X_udot_p)
-        v_dot_p = ((self.Iz_prime - self.N_rdot_p) * f2_p - (self.m_prime * self.xG_prime - self.Y_rdot_p) * f3_p) / detM
-        r_dot_p = ((self.m_prime - self.Y_vdot_p) * f3_p - (self.m_prime * self.xG_prime - self.N_vdot_p) * f2_p) / detM
+        v_dot_p = ((self.Iz_prime - self.N_rdot_p) * f2_p - (self.m_prime * self.xG_prime - self.Y_rdot_p) * f3_p) / basis['detM']
+        r_dot_p = ((self.m_prime - self.Y_vdot_p) * f3_p - (self.m_prime * self.xG_prime - self.N_vdot_p) * f2_p) / basis['detM']
 
-        # Dimensional accelerations
-        u_dot = u_dot_p * (U ** 2) / self.L
-        v_dot = v_dot_p * (U ** 2) / self.L
-        r_dot = r_dot_p * (U ** 2) / (self.L ** 2)
+        u_dot = u_dot_p * basis['scale_lin']
+        v_dot = v_dot_p * basis['scale_lin']
+        r_dot = r_dot_p * basis['scale_ang']
 
+        if u.dim() == 0:
+            return u_dot.squeeze(0), v_dot.squeeze(0), r_dot.squeeze(0)
         return u_dot, v_dot, r_dot
 
-    def compute_loss(self, inputs_norm, targets_norm, inputs_raw, tgt_mean, tgt_std, beta=0.01):
+    def compute_loss(self, inputs_norm, targets_norm, inputs_raw=None, tgt_mean=None, tgt_std=None, beta=0.01, basis=None):
         """
         Computes total loss, observation data loss, and physical residuals.
         Reference: Page 5, Equations (15)-(18).
@@ -177,9 +190,7 @@ class ShipPINN(nn.Module):
         # Neural network forward pass
         pred_norm = self.forward(inputs_norm)
 
-        # 1. Observation Data Loss (Equation 17):
-        # Loss_data = (1/No) * sum( |u_dot_data - u_dot|^2 + |v_dot_data - v_dot|^2 + |r_dot_data - r_dot|^2 )
-        # Summed over 3 components, averaged over No batch samples
+        # 1. Observation Data Loss (Equation 17)
         loss_data = torch.mean(torch.sum((pred_norm - targets_norm) ** 2, dim=-1))
 
         # 2. Destandardize neural network predictions to physical units
@@ -188,15 +199,27 @@ class ShipPINN(nn.Module):
         v_dot_nn = pred_raw[:, 1]
         r_dot_nn = pred_raw[:, 2]
 
-        # 3. Evaluate physical accelerations from current 36 hydrodynamic derivatives
-        u_raw = inputs_raw[:, 0]
-        v_raw = inputs_raw[:, 1]
-        r_raw = inputs_raw[:, 2]
-        delta_raw = inputs_raw[:, 3]
-        u_dot_phy, v_dot_phy, r_dot_phy = self.compute_physics_accelerations(u_raw, v_raw, r_raw, delta_raw)
+        # 3. Evaluate physical accelerations
+        if basis is None:
+            basis = self.precompute_basis(inputs_raw)
+
+        theta1 = torch.stack([self.hydro_params[k] for k in X_PARAM_NAMES])
+        theta2 = torch.stack([self.hydro_params[k] for k in Y_PARAM_NAMES])
+        theta3 = torch.stack([self.hydro_params[k] for k in N_PARAM_NAMES])
+
+        f1_p = torch.matmul(basis['phi1'], theta1) + basis['f1_const']
+        f2_p = torch.matmul(basis['phi2'], theta2) + basis['f2_const']
+        f3_p = torch.matmul(basis['phi2'], theta3) + basis['f3_const']
+
+        u_dot_p = f1_p / (self.m_prime - self.X_udot_p)
+        v_dot_p = ((self.Iz_prime - self.N_rdot_p) * f2_p - (self.m_prime * self.xG_prime - self.Y_rdot_p) * f3_p) / basis['detM']
+        r_dot_p = ((self.m_prime - self.Y_vdot_p) * f3_p - (self.m_prime * self.xG_prime - self.N_vdot_p) * f2_p) / basis['detM']
+
+        u_dot_phy = u_dot_p * basis['scale_lin']
+        v_dot_phy = v_dot_p * basis['scale_lin']
+        r_dot_phy = r_dot_p * basis['scale_ang']
 
         # 4. Physical Residuals (Equation 15):
-        # e1 = |u_dot_phy - u_dot|, e2 = |v_dot_phy - v_dot|, e3 = |r_dot_phy - r_dot|
         e1 = u_dot_phy - u_dot_nn
         e2 = v_dot_phy - v_dot_nn
         e3 = r_dot_phy - r_dot_nn
@@ -208,7 +231,6 @@ class ShipPINN(nn.Module):
         loss_phy = loss_phy_u + loss_phy_v + loss_phy_r
 
         # 6. Total Loss (Equation 18):
-        # Loss = Loss_data + beta * Loss_phy
         total_loss = loss_data + beta * loss_phy
 
         return {

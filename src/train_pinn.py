@@ -108,6 +108,9 @@ def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42,
     # Optimizer optimizes both neural network parameters AND 36 hydrodynamic derivatives jointly
     optimizer = torch.optim.Adam(model.parameters(), lr=initial_lr)
 
+    # Precompute invariant basis matrices for training set (exact O(1) evaluation)
+    basis = model.precompute_basis(X_train_raw)
+
     history = {
         'iteration': [],
         'total_loss': [],
@@ -143,7 +146,8 @@ def train_pinn(iterations=40000, weighting='dynamic', initial_lr=0.001, seed=42,
             inputs_raw=X_train_raw,
             tgt_mean=tgt_mean,
             tgt_std=tgt_std,
-            beta=beta
+            beta=beta,
+            basis=basis
         )
 
         loss_dict['total_loss'].backward()

@@ -266,7 +266,13 @@ Acceptance criteria:
 - At least one checkpoint can be saved and reloaded, if checkpointing is needed for the main run.
 - Known issues are documented, not hidden.
 
-### [ ] T7 — Main PINN simulation run
+### [x] T7 — Main PINN simulation run
+**Completed:** 28 October 2026.
+- Executed main simulation run (20,000 iterations, dynamic weighting $\beta = 0.01 \to 0.10$, seed 42) in 387.2 s (6.45 min) on CPU.
+- Total loss converged from $4.953$ to $3.38 \times 10^{-4}$ (Data loss: $3.02 \times 10^{-4}$, Physics residual loss: $3.61 \times 10^{-4}$).
+- Saved checkpoint `outputs/checkpoints/pinn_dynamic.pt` containing model weights, 36 estimated hydrodynamic derivatives, and full loss histories.
+- Saved loss curves to `outputs/plots/pinn_dynamic_loss_curves.png` reproducing the characteristic transient loss balance seen in paper Figure 3b.
+- Evaluated on all 3 held-out test maneuvers with results saved to `outputs/metrics/pinn_dynamic_metrics.md` and `.json`. All 22 tests pass.
 **Target:** 29 October, if the smoke test is stable. **Estimate:** 3–6 hours, depending on the machine.
 
 Actions:
